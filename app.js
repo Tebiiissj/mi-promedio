@@ -88,9 +88,8 @@ async function loadFromFirebase() {
         if (docRef.exists) {
             courses = docRef.data().courses || [];
         } else {
-            // Si es usuario nuevo, intentamos migrar los datos locales
-            loadFromStorageFallback();
-            if (courses.length > 0) saveToStorage();
+            // Cuenta nueva: empezamos desde cero para no mezclar datos del dispositivo
+            courses = [];
         }
         renderAll();
     } catch (e) {
