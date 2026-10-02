@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Calculadora de promedios universitarios. Ingresa tus notas, calcula tu promedio y recibe sugerencias para aprobar tus cursos.">
+    <title>MiPromedio — Calculadora de Notas Universitaria</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Animated background particles -->
+    <div class="bg-particles" id="bgParticles"></div>
+
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-group">
+                <div class="logo-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                        <path d="M6 12v5c0 2 4 3 6 3s6-1 6-3v-5"/>
+                    </svg>
+                </div>
+                <h1 class="logo-text">MiPromedio</h1>
+            </div>
+            <p class="header-subtitle">Calculadora de Notas Universitaria</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Global Summary Cards -->
+        <section class="summary-section" id="summarySection">
+            <div class="summary-card summary-courses">
+                <div class="summary-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                </div>
+                <div class="summary-data">
+                    <span class="summary-value" id="totalCourses">0</span>
+                    <span class="summary-label">Cursos</span>
+                </div>
+            </div>
+            <div class="summary-card summary-average">
+                <div class="summary-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                </div>
+                <div class="summary-data">
+                    <span class="summary-value" id="globalAverage">—</span>
+                    <span class="summary-label">Promedio General</span>
+                </div>
+            </div>
+            <div class="summary-card summary-status">
+                <div class="summary-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                </div>
+                <div class="summary-data">
+                    <span class="summary-value" id="approvedCount">0/0</span>
+                    <span class="summary-label">Aprobados</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Add Course Button -->
+        <section class="add-course-section">
+            <button class="btn-add-course" id="btnAddCourse" onclick="openCourseModal()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Agregar Curso
+            </button>
+        </section>
+
+        <!-- Courses Container -->
+        <section class="courses-container" id="coursesContainer">
+            <!-- Empty state -->
+            <div class="empty-state" id="emptyState">
+                <div class="empty-icon">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                        <path d="M6 12v5c0 2 4 3 6 3s6-1 6-3v-5"/>
+                    </svg>
+                </div>
+                <h2>¡Comienza agregando tus cursos!</h2>
+                <p>Haz clic en "Agregar Curso" para empezar a calcular tus promedios del semestre.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Course Modal -->
+    <div class="modal-overlay" id="courseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Nuevo Curso</h2>
+                <button class="modal-close" onclick="closeCourseModal()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="courseName">Nombre del curso</label>
+                    <input type="text" id="courseName" placeholder="Ej: Cálculo I" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label for="courseEvals">Número de evaluaciones</label>
+                    <input type="number" id="courseEvals" placeholder="Ej: 3" min="1" max="20" value="3">
+                </div>
+                <div class="form-group" id="weightsGroup" style="display:none;">
+                    <label>
+                        <input type="checkbox" id="useCustomWeights" onchange="toggleWeights()">
+                        Usar ponderaciones personalizadas
+                    </label>
+                </div>
+                <div class="weights-container" id="weightsContainer" style="display:none;">
+                    <!-- Dynamic weight inputs -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeCourseModal()">Cancelar</button>
+                <button class="btn-primary" onclick="saveCourse()">Guardar Curso</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast"></div>
+
+    <footer class="app-footer">
+        <p>MiPromedio &copy; 2026 — Sistema de calificación 1.0 a 7.0 · Nota aprobatoria ≥ 4.0</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
