@@ -22,23 +22,7 @@ const MAX_GRADE = 7.0;
 // Firebase & Cloud Sync Logic
 // ===========================
 const firebaseConfig = {
-   // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyCzBV-vIw8ec1ExTlSmGH7c-bCw-0XbJ8Q",
-  authDomain: "mipromedio-app.firebaseapp.com",
-  projectId: "mipromedio-app",
-  storageBucket: "mipromedio-app.firebasestorage.app",
-  messagingSenderId: "76902119281",
-  appId: "1:76902119281:web:6724b438754f0d7e72e8d0"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+    // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries

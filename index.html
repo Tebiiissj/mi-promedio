@@ -2,20 +2,57 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="description" content="Calculadora de promedios universitarios. Ingresa tus notas, calcula tu promedio y recibe sugerencias para aprobar tus cursos.">
+    <meta name="theme-color" content="#6C63FF">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="MiPromedio">
+    
     <title>MiPromedio — Calculadora de Notas Universitaria</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Favicon & App Icons -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%236C63FF'/><text x='50' y='62' font-family='Arial' font-size='40' font-weight='bold' fill='white' text-anchor='middle'>4.0</text><path d='M50 15 L65 25 L35 25 Z' fill='%2300D4FF'/></svg>">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <!-- Animated background particles -->
     <div class="bg-particles" id="bgParticles"></div>
 
+    <!-- PWA Install Banner -->
+    <div class="install-banner" id="installBanner">
+        <div class="install-banner-content">
+            <div class="install-banner-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </div>
+            <div class="install-banner-text">
+                <strong>Instalar MiPromedio</strong>
+                <span>Agrega la app a tu pantalla de inicio</span>
+            </div>
+            <button class="install-btn" id="installBtn" onclick="installApp()">Instalar</button>
+            <button class="install-dismiss" onclick="dismissInstall()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+    </div>
+
     <!-- Header -->
     <header class="app-header">
+        <div class="user-profile" id="userProfile" style="display: none;">
+            <span class="user-name" id="userName">Usuario</span>
+            <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
+        </div>
         <div class="header-content">
             <div class="logo-group">
                 <div class="logo-icon">
@@ -128,6 +165,32 @@
     <footer class="app-footer">
         <p>MiPromedio &copy; 2026 — Sistema de calificación 1.0 a 7.0 · Nota aprobatoria ≥ 4.0</p>
     </footer>
+
+    <!-- Login Overlay -->
+    <div class="login-overlay" id="loginOverlay" style="display: none;">
+        <div class="login-box">
+            <div class="logo-icon" style="margin: 0 auto 1rem;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 4 3 6 3s6-1 6-3v-5"/></svg>
+            </div>
+            <h2>Bienvenido a MiPromedio</h2>
+            <p>Inicia sesión para guardar y sincronizar tus notas en la nube de forma segura en todos tus dispositivos.</p>
+            <button class="btn-primary" onclick="loginWithGoogle()" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 1.5rem;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                Continuar con Google
+            </button>
+            <div id="firebaseConfigError" style="display:none; color: var(--accent-danger); font-size: 0.85rem; margin-top: 15px; background: rgba(255, 77, 106, 0.1); padding: 10px; border-radius: 8px; border: 1px solid rgba(255, 77, 106, 0.3);">
+                Falta configurar Firebase. Revisa la guía en tus archivos para agregar tus claves.
+            </div>
+            <button class="btn-secondary" onclick="continueOffline()" style="width: 100%; margin-top: 1rem; font-size: 0.85rem; border: none; background: rgba(93, 92, 122, 0.1);">
+                Continuar sin conexión (Modo Local)
+            </button>
+        </div>
+    </div>
+
+    <!-- Firebase JS SDK (Compat version for simplicity) -->
+    <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore-compat.js"></script>
 
     <script src="app.js"></script>
 </body>

@@ -988,6 +988,102 @@ body {
 }
 
 /* ===========================
+   PWA Install Banner
+   =========================== */
+.install-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 900;
+    transform: translateY(-100%);
+    transition: transform var(--transition-smooth);
+}
+
+.install-banner.show {
+    transform: translateY(0);
+}
+
+.install-banner-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    background: rgba(18, 18, 50, 0.95);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-active);
+    box-shadow: 0 4px 24px rgba(108, 99, 255, 0.2);
+}
+
+.install-banner-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    background: var(--gradient-primary);
+    color: white;
+    flex-shrink: 0;
+}
+
+.install-banner-text {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+.install-banner-text strong {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.install-banner-text span {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.install-btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--gradient-primary);
+    color: white;
+    font-family: var(--font-main);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.install-btn:hover {
+    box-shadow: 0 2px 12px var(--accent-primary-glow);
+    transform: translateY(-1px);
+}
+
+.install-dismiss {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all var(--transition-fast);
+}
+
+.install-dismiss:hover {
+    background: rgba(255, 77, 106, 0.15);
+    color: var(--accent-danger);
+}
+
+/* ===========================
    Footer
    =========================== */
 .app-footer {
@@ -1022,6 +1118,85 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
     background: var(--text-secondary);
+}
+
+/* ===========================
+   Login & User Profile
+   =========================== */
+.login-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(10, 10, 26, 0.95);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000;
+    padding: 1.5rem;
+}
+
+.login-box {
+    background: var(--bg-modal);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+    padding: 2.5rem;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+    animation: slideInUp 0.4s ease;
+}
+
+.login-box h2 {
+    margin-bottom: 0.5rem;
+    font-size: 1.4rem;
+}
+
+.login-box p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.user-profile {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 20;
+    background: rgba(22, 22, 50, 0.5);
+    padding: 6px 16px;
+    border-radius: 30px;
+    border: 1px solid var(--border-subtle);
+}
+
+.user-name {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.btn-logout {
+    background: transparent;
+    color: var(--text-secondary);
+    border: none;
+    font-size: 0.8rem;
+    font-family: var(--font-main);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 600;
+}
+
+.btn-logout:hover {
+    color: var(--accent-danger);
 }
 
 /* ===========================
