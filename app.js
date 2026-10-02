@@ -19,11 +19,119 @@ const MIN_GRADE = 1.0;
 const MAX_GRADE = 7.0;
 
 // ===========================
+// Firebase & Cloud Sync Logic
+// ===========================
+const firebaseConfig = {
+    // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCzBV-vIw8ec1ExTlSmGH7c-bCw-0XbJ8Q",
+  authDomain: "mipromedio-app.firebaseapp.com",
+  projectId: "mipromedio-app",
+  storageBucket: "mipromedio-app.firebasestorage.app",
+  messagingSenderId: "76902119281",
+  appId: "1:76902119281:web:6724b438754f0d7e72e8d0"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+};
+
+const isFirebaseConfigured = Object.keys(firebaseConfig).length > 0;
+let currentUser = null;
+let db = null;
+let auth = null;
+
+if (isFirebaseConfigured && typeof firebase !== 'undefined') {
+    firebase.initializeApp(firebaseConfig);
+    auth = firebase.auth();
+    db = firebase.firestore();
+
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            currentUser = user;
+            document.getElementById('loginOverlay').style.display = 'none';
+            document.getElementById('userName').textContent = user.displayName || user.email;
+            document.getElementById('userProfile').style.display = 'flex';
+            loadFromFirebase();
+        } else {
+            currentUser = null;
+            document.getElementById('loginOverlay').style.display = 'flex';
+            document.getElementById('userProfile').style.display = 'none';
+            courses = [];
+            renderAll();
+        }
+    });
+}
+
+function loginWithGoogle() {
+    if (!isFirebaseConfigured) {
+        document.getElementById('firebaseConfigError').style.display = 'block';
+        return;
+    }
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).catch(error => {
+        console.error("Error en login:", error);
+        showToast("Error al iniciar sesión");
+    });
+}
+
+function logout() {
+    if (auth) auth.signOut();
+}
+
+function continueOffline() {
+    document.getElementById('loginOverlay').style.display = 'none';
+    const profile = document.getElementById('userProfile');
+    if(profile) profile.style.display = 'none';
+    loadFromStorageFallback();
+    renderAll();
+}
+
+async function loadFromFirebase() {
+    try {
+        const docRef = await db.collection('users').doc(currentUser.uid).get();
+        if (docRef.exists) {
+            courses = docRef.data().courses || [];
+        } else {
+            // Si es usuario nuevo, intentamos migrar los datos locales
+            loadFromStorageFallback();
+            if (courses.length > 0) saveToStorage();
+        }
+        renderAll();
+    } catch (e) {
+        console.error(e);
+        showToast("Error al sincronizar datos");
+    }
+}
+
+function loadFromStorageFallback() {
+    const stored = localStorage.getItem('miPromedio_courses');
+    if (stored) {
+        try { courses = JSON.parse(stored); } catch (e) { courses = []; }
+    }
+}
+
+function saveToStorage() {
+    if (isFirebaseConfigured && currentUser) {
+        db.collection('users').doc(currentUser.uid).set({ courses: courses })
+            .catch(e => console.error("Error guardando en la nube: ", e));
+    } else {
+        localStorage.setItem('miPromedio_courses', JSON.stringify(courses));
+    }
+}
+
+// ===========================
 // Initialization
 // ===========================
 document.addEventListener('DOMContentLoaded', () => {
-    loadFromStorage();
-    renderAll();
+    if (!isFirebaseConfigured) {
+        document.getElementById('loginOverlay').style.display = 'flex';
+    }
     createParticles();
 });
 
@@ -32,6 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ===========================
 function createParticles() {
     const container = document.getElementById('bgParticles');
+    if (!container) return;
     const colors = ['rgba(108,99,255,0.3)', 'rgba(0,212,255,0.2)', 'rgba(0,232,143,0.2)'];
     
     for (let i = 0; i < 30; i++) {
@@ -45,24 +154,6 @@ function createParticles() {
         particle.style.animationDuration = (Math.random() * 20 + 15) + 's';
         particle.style.animationDelay = (Math.random() * 15) + 's';
         container.appendChild(particle);
-    }
-}
-
-// ===========================
-// Local Storage
-// ===========================
-function saveToStorage() {
-    localStorage.setItem('miPromedio_courses', JSON.stringify(courses));
-}
-
-function loadFromStorage() {
-    const stored = localStorage.getItem('miPromedio_courses');
-    if (stored) {
-        try {
-            courses = JSON.parse(stored);
-        } catch (e) {
-            courses = [];
-        }
     }
 }
 
